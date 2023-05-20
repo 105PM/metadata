@@ -55,18 +55,18 @@ class P(object):
     }  
 
     plugin_info = {
-        'version' : '0.2.0.0',
+        'version' : '0.2.0.0p',
         'name' : package_name,
         'category' : 'tool',
         'icon' : '',
-        'developer' : 'soju6jan',
+        'developer' : 'by275',
         'description' : 'Metadata',
-        'home' : 'https://github.com/soju6jan/%s' % package_name,
+        'home' : 'https://github.com/by275/%s' % package_name,
         'more' : '',
         'dependency' : [
             {   
                 'name' : 'lib_metadata',
-                'home' : 'https://github.com/soju6jan/lib_metadata',
+                'home' : 'https://github.com/by275/lib_metadata',
             }
         ]
     }
