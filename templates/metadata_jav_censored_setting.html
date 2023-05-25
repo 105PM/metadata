@@ -9,27 +9,33 @@
   <nav>  
     {{ macros.m_tab_head_start() }}
       {{ macros.m_tab_head2('normal', '기본', true) }}
-      {{ macros.m_tab_head2('actor', '배우정보', false) }}
+      {{ macros.m_tab_head2('avdbs', 'Avdbs', false) }}
+      {{ macros.m_tab_head2('hentaku', 'Hentaku', false) }}
     {{ macros.m_tab_head_end() }}
   </nav>
   <form id='setting' name='setting'>
-  <div class="tab-content" id="nav-tabContent">
+  <div class="tab-content mb-4" id="nav-tabContent">
     {{ macros.m_tab_content_start('normal', true) }}
-      {{ macros.setting_checkbox('jav_censored_use_sjva', 'SJVA 서버 사용', value=arg['jav_censored_use_sjva'], desc=['데이터를 SJVA 서버에서 우선 검색하여 가져옵니다.', '데이터가 있을 경우 : 직접 사이트에 접속하지 않고 번역까지 포함된 메타데이터를 가져옵니다.', '데이터가 없을 경우 : 설정에 따르며 결과를 서버에 저장합니다.', '저장조건 : 구글 번역 사용, 이미지 URL 처리 - 디스코드 URL']) }}
-      {{ macros.setting_input_text('jav_censored_order', '우선순위', value=arg['jav_censored_order'], desc=['메타데이터를 가져올 우선순위 설정', 'dmm, javbus']) }}
-      {{ macros.setting_input_text('jav_censored_title_format', '타이틀 포맷', value=arg['jav_censored_title_format'], desc=['title runtime premiered year actor tagline']) }}
-      {{ macros.setting_input_int('jav_censored_art_count', 'Art 수', value=arg['jav_censored_art_count'], min='0', desc=None) }}
-      {{ macros.setting_radio('jav_censored_tag_option', '태그(컬렉션) 옵션', ['사용안함', '라벨', '라벨 + 메타 사이트 태그', '메타 사이트 태그'], value=arg['jav_censored_tag_option']) }}
-      {{ macros.setting_checkbox('jav_censored_use_extras', '예고편 사용', value=arg['jav_censored_use_extras'], desc=None) }}
+      {{ macros.setting_input_text('jav_censored_order', '메타 우선순위', value=arg['jav_censored_order'], desc=['메타데이터를 가져올 우선순위 설정', 'dmm, javbus']) }}
+      {{ macros.setting_input_text('jav_censored_actor_order', '배우 우선순위', value=arg['jav_censored_actor_order'], desc=['배우정보를 가져울 순위 설정', 'avdbs, hentaku']) }}
     {{ macros.m_tab_content_end() }}
-    {{ macros.m_tab_content_start('actor', false) }}
-      {{ macros.setting_input_text('jav_censored_actor_order', '우선순위', value=arg['jav_censored_actor_order'], desc=['배우정보를 가져울 순위 설정', 'avdbs, hentaku']) }}
-      {{ macros.m_hr() }}
-      {{ macros.setting_checkbox('jav_censored_avdbs_use_proxy', 'Avdbs Proxy 사용', value=arg['jav_censored_avdbs_use_proxy'], desc=None) }}
+    {{ macros.m_tab_content_start('avdbs', false) }}
+      {{ macros.setting_input_text_and_buttons('jav_censored_avdbs_test_name', '테스트', [['jav_censored_avdbs_test_btn', '테스트']], value=arg['jav_censored_avdbs_test_name'], desc=None) }}
+      {{ macros.setting_checkbox('jav_censored_avdbs_use_sjva', '메타 서버 사용', value=arg['jav_censored_avdbs_use_sjva'], desc=['meta.sjva.me에서 우선 검색하여 가져옵니다.', '데이터가 있으면 서버에서 번역까지 포함된 메타데이터를 가져옵니다.', '데이터가 없으면 설정에 따르며 결과를 서버에 저장합니다.', '저장조건: 구글 번역 사용, 이미지 URL 처리 - 디스코드 Proxy']) }}
+      {{ macros.setting_checkbox('jav_censored_avdbs_use_proxy', 'Proxy 사용', value=arg['jav_censored_avdbs_use_proxy'], desc=['sjva가 해당 사이트에 접속할 수 없을 때 사용']) }}
       <div id="jav_censored_avdbs_use_proxy_div" class="collapse">
-      {{ macros.setting_input_text('jav_censored_avdbs_proxy_url', 'Avdbs Proxy URL', value=arg['jav_censored_avdbs_proxy_url'], desc=None) }}
+      {{ macros.setting_input_text('jav_censored_avdbs_proxy_url', 'Proxy URL', value=arg['jav_censored_avdbs_proxy_url']) }}
       </div>
-      {{ macros.setting_input_text_and_buttons('jav_censored_actor_test_name', '테스트', [['jav_censored_actor_test_avdbs_btn', 'avdbs'], ['jav_censored_actor_test_hentaku_btn', 'hentaku']], value=arg['jav_censored_actor_test_name'], desc=None) }}
+      {{ macros.setting_radio('jav_censored_avdbs_image_mode', '이미지 URL 처리 방법', ['원본', 'SJVA Proxy', '디스코드 Redirect', '디스코드 Proxy'], value=arg['jav_censored_avdbs_image_mode'], desc=['원본: 원본 URL (클라이언트가 해당 URL에 접속 가능해야 함)', 'SJVA Proxy: SJVA가 이미지를 받아서 중계하는 URL (lazy)', '디스코드 Redirect: 이미지를 디스코드에 업로드 후 Redirect하는 URL (lazy)', '디스코드 Proxy: 이미지를 디스코드에 업로드 후 그 URL을 반환']) }}
+    {{ macros.m_tab_content_end() }}
+    {{ macros.m_tab_content_start('hentaku', false) }}
+      {{ macros.setting_input_text_and_buttons('jav_censored_hentaku_test_name', '테스트', [['jav_censored_hentaku_test_btn', '테스트']], value=arg['jav_censored_hentaku_test_name'], desc=None) }}
+      {{ macros.setting_checkbox('jav_censored_hentaku_use_sjva', '메타 서버 사용', value=arg['jav_censored_hentaku_use_sjva'], desc=['meta.sjva.me에서 우선 검색하여 가져옵니다.', '데이터가 있으면 서버에서 번역까지 포함된 메타데이터를 가져옵니다.', '데이터가 없으면 설정에 따르며 결과를 서버에 저장합니다.', '저장조건: 구글 번역 사용, 이미지 URL 처리 - 디스코드 Proxy']) }}
+      {{ macros.setting_checkbox('jav_censored_hentaku_use_proxy', 'Proxy 사용', value=arg['jav_censored_hentaku_use_proxy'], desc=['sjva가 해당 사이트에 접속할 수 없을 때 사용']) }}
+      <div id="jav_censored_hentaku_use_proxy_div" class="collapse">
+      {{ macros.setting_input_text('jav_censored_hentaku_proxy_url', 'Proxy URL', value=arg['jav_censored_hentaku_proxy_url']) }}
+      </div>
+      {{ macros.setting_radio('jav_censored_hentaku_image_mode', '이미지 URL 처리 방법', ['원본', 'SJVA Proxy', '디스코드 Redirect', '디스코드 Proxy'], value=arg['jav_censored_hentaku_image_mode'], desc=['원본: 원본 URL (클라이언트가 해당 URL에 접속 가능해야 함)', 'SJVA Proxy: SJVA가 이미지를 받아서 중계하는 URL (lazy)', '디스코드 Redirect: 이미지를 디스코드에 업로드 후 Redirect하는 URL (lazy)', '디스코드 Proxy: 이미지를 디스코드에 업로드 후 그 URL을 반환']) }}
     {{ macros.m_tab_content_end() }}
     
   </div><!--tab-content-->
@@ -43,26 +49,34 @@ var current_data = null;
 
 $(document).ready(function(){
   use_collapse("jav_censored_avdbs_use_proxy");
+  use_collapse("jav_censored_hentaku_use_proxy");
 });
 
 $('#jav_censored_avdbs_use_proxy').change(function() {
   use_collapse('jav_censored_avdbs_use_proxy');
 });
 
+$('#jav_censored_hentaku_use_proxy').change(function() {
+  use_collapse('jav_censored_hentaku_use_proxy');
+});
 
-$("body").on('click', '#jav_censored_actor_test_avdbs_btn', function(e){
+
+$("body").on('click', '#jav_censored_avdbs_test_btn', function(e){
   e.preventDefault();
   func_test('avdbs');
 });
 
-$("body").on('click', '#jav_censored_actor_test_hentaku_btn', function(e){
+$("body").on('click', '#jav_censored_hentaku_test_btn', function(e){
   e.preventDefault();
   func_test('hentaku');
 });
 
 
 function func_test(call) {
-  name = document.getElementById("jav_censored_actor_test_name").value
+  name = document.getElementById(`jav_censored_${call}_test_name`).value
+  if (!name || !name.trim()) {
+    return
+  }
   $.ajax({
     url: '/' + package_name + '/ajax/' + sub + '/actor_test',
     type: "POST", 
