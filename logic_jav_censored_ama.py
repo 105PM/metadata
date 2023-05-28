@@ -178,12 +178,10 @@ class LogicJavCensoredAma(LogicModuleBase):
             return None
 
         ret = data["data"]
-        if (
-            use_sjva
-            and sett["image_mode"] == "3"
-            and SystemModelSetting.get("trans_type") in ["1", "3"]
-            and SystemModelSetting.get("trans_google_api_key") != ""
-        ):
+        trans_ok = (
+            SystemModelSetting.get("trans_type") == "1" and SystemModelSetting.get("trans_google_api_key").strip() != ""
+        ) or SystemModelSetting.get("trans_type") in ["3", "4"]
+        if use_sjva and sett["image_mode"] == "3" and trans_ok:
             MetadataServerUtil.set_metadata_jav_censored(code, ret, ret["title"].lower())
         return ret
 

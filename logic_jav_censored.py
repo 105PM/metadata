@@ -69,7 +69,7 @@ class LogicJavCensored(LogicModuleBase):
         "jav_censored_javbus_art_count": "0",
         "jav_censored_javbus_tag_option": "2",
         "jav_censored_javbus_use_extras": "True",
-        "jav_censored_javbus_code": "abw-354",
+        "jav_censored_javbus_test_code": "abw-354",
         #
         "jav_censored_mgs_code": "abw-073",
         "jav_censored_mgs_use_proxy": "False",
@@ -250,12 +250,10 @@ class LogicJavCensored(LogicModuleBase):
             return None
 
         ret = data["data"]
-        if (
-            use_sjva
-            and sett["image_mode"] == "3"
-            and SystemModelSetting.get("trans_type") in ["1", "3"]
-            and SystemModelSetting.get("trans_google_api_key") != ""
-        ):
+        trans_ok = (
+            SystemModelSetting.get("trans_type") == "1" and SystemModelSetting.get("trans_google_api_key").strip() != ""
+        ) or SystemModelSetting.get("trans_type") in ["3", "4"]
+        if use_sjva and sett["image_mode"] == "3" and trans_ok:
             MetadataServerUtil.set_metadata_jav_censored(code, ret, ret["title"].lower())
         return ret
 
