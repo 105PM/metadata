@@ -141,7 +141,7 @@ class LogicJavCensoredAma(LogicModuleBase):
             premiered=ret["premiered"],
             year=ret["year"],
             actor=actors[0].get("name", "") if actors else "",
-            tagline=ret.get("tagline", ""),
+            tagline=ret["tagline"] or "",
         )
 
         if "tag" in ret:
