@@ -18,6 +18,7 @@
     {{ macros.m_tab_content_start('normal', true) }}
       {{ macros.setting_input_text('jav_censored_order', '메타 우선순위', value=arg['jav_censored_order'], desc=['메타데이터를 가져올 우선순위 설정', 'dmm, javbus']) }}
       {{ macros.setting_input_text('jav_censored_actor_order', '배우 우선순위', value=arg['jav_censored_actor_order'], desc=['배우정보를 가져울 순위 설정', 'avdbs, hentaku']) }}
+      {{ macros.setting_button_with_info([['jav_censored_rcache_clear_btn', '초기화']], left='requests cache 초기화', desc='')}}
     {{ macros.m_tab_content_end() }}
     {{ macros.m_tab_content_start('avdbs', false) }}
       {{ macros.setting_input_text_and_buttons('jav_censored_avdbs_test_name', '테스트', [['jav_censored_avdbs_test_btn', '테스트']], value=arg['jav_censored_avdbs_test_name'], desc=None) }}
@@ -89,6 +90,26 @@ function func_test(call) {
   });
 }
 
+$("body").on('click', '#jav_censored_rcache_clear_btn', function(e){
+  e.preventDefault();
+  $.ajax({
+    url: '/' + package_name + '/ajax/' + sub + '/rcache_clear',
+    type: "POST", 
+    cache: false,
+    dataType: "json",    
+    success: function(data) {
+        if (data.ret == "success") {
+            $.notify('<strong>초기화 성공</strong>', {
+                type: 'success'
+            });
+        } else {
+            $.notify('<strong>초기화 실패</strong><br>' + data.log, {
+                type: 'warning'
+            });
+        }
+    }
+  });
+});
 
 
 

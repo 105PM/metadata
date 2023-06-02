@@ -118,6 +118,10 @@ class LogicJavCensored(LogicModuleBase):
                 entity_actor = {"originalname": name}
                 self.process_actor2(entity_actor, call)
                 return jsonify(entity_actor)
+            if sub == "rcache_clear":
+                SiteUtil.session.cache.clear()
+                return jsonify({"ret": "success"})
+            raise NotImplementedError(f"알려지지 않은 sub={sub}")
         except Exception as e:
             logger.exception("AJAX 요청 처리 중 예외:")
             return jsonify({"ret": "exception", "log": str(e)})
