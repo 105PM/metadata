@@ -8,8 +8,8 @@ from lib_metadata import (
     SiteAvdbs,
     SiteDmm,
     SiteHentaku,
+    SiteJav321,
     SiteJavbus,
-    SiteMgstageDvd,
     SiteUtil,
     UtilNfo,
 )
@@ -70,20 +70,18 @@ class LogicJavCensored(LogicModuleBase):
         "jav_censored_javbus_tag_option": "2",
         "jav_censored_javbus_use_extras": "True",
         "jav_censored_javbus_test_code": "abw-354",
-        #
-        "jav_censored_mgs_code": "abw-073",
-        "jav_censored_mgs_use_proxy": "False",
-        "jav_censored_mgs_proxy_url": "",
-        "jav_censored_mgs_image_mode": "0",
-        "jav_censored_mgs_attach_number": "",
     }
 
     site_map = {
         "avdbs": SiteAvdbs,
         "dmm": SiteDmm,
         "hentaku": SiteHentaku,
+        "jav321": SiteJav321,
         "javbus": SiteJavbus,
-        "mgs": SiteMgstageDvd,
+    }
+
+    db_prefix = {
+        "jav321": "jav_censored_ama",
     }
 
     def __init__(self, PM):
@@ -190,6 +188,8 @@ class LogicJavCensored(LogicModuleBase):
             site = "javbus"
         elif code[1] == "D":
             site = "dmm"
+        elif code[1] == "T":
+            site = "jav321"
         else:
             logger.error("처리할 수 없는 코드: code=%s", code)
             return None
@@ -197,6 +197,8 @@ class LogicJavCensored(LogicModuleBase):
         ret = self.info2(code, site)
         if ret is None:
             return ret
+
+        db_prefix = f"{self.db_prefix.get(site, self.name)}_{site}"
 
         # lib_metadata로부터 받은 데이터를 가공
         ret["plex_is_proxy_preview"] = True  # ModelSetting.get_bool('jav_censored_plex_is_proxy_preview')
@@ -219,7 +221,7 @@ class LogicJavCensored(LogicModuleBase):
             except Exception:
                 logger.exception("오역된 배우 이름이 들어간 항목 수정 중 예외:")
 
-        ret["title"] = ModelSetting.get(f"{self.name}_{site}_title_format").format(
+        ret["title"] = ModelSetting.get(f"{db_prefix}_title_format").format(
             originaltitle=ret["originaltitle"],
             plot=ret["plot"],
             title=ret["title"],
@@ -233,7 +235,7 @@ class LogicJavCensored(LogicModuleBase):
         )
 
         if "tag" in ret:
-            tag_option = ModelSetting.get(f"{self.name}_{site}_tag_option")
+            tag_option = ModelSetting.get(f"{db_prefix}_tag_option")
             if tag_option == "0":
                 ret["tag"] = []
             elif tag_option == "1":
@@ -248,7 +250,8 @@ class LogicJavCensored(LogicModuleBase):
         return ret
 
     def info2(self, code, site):
-        use_sjva = ModelSetting.get_bool(f"{self.name}_{site}_use_sjva")
+        db_prefix = f"{self.db_prefix.get(site, self.name)}_{site}"
+        use_sjva = ModelSetting.get_bool(f"{db_prefix}_use_sjva")
         if use_sjva:
             ret = MetadataServerUtil.get_metadata(code)
             if ret is not None:
@@ -291,7 +294,8 @@ class LogicJavCensored(LogicModuleBase):
 
         code = "A" + SiteClass.site_char + originalname
 
-        use_sjva = ModelSetting.get_bool(f"{self.name}_{site}_use_sjva")
+        db_prefix = f"{self.db_prefix.get(site, self.name)}_{site}"
+        use_sjva = ModelSetting.get_bool(f"{db_prefix}_use_sjva")
         if use_sjva:
             data = MetadataServerUtil.get_metadata(code) or entity_actor
             name = data.get("name", None)
@@ -318,28 +322,30 @@ class LogicJavCensored(LogicModuleBase):
         return True
 
     def __site_settings(self, site: str):
+        db_prefix = f"{self.db_prefix.get(site, self.name)}_{site}"
         proxy_url = None
-        if ModelSetting.get_bool(f"{self.name}_{site}_use_proxy"):
-            proxy_url = ModelSetting.get(f"{self.name}_{site}_proxy_url")
+        if ModelSetting.get_bool(f"{db_prefix}_use_proxy"):
+            proxy_url = ModelSetting.get(f"{db_prefix}_proxy_url")
         return {
             "proxy_url": proxy_url,
-            "image_mode": ModelSetting.get(f"{self.name}_{site}_image_mode"),
+            "image_mode": ModelSetting.get(f"{db_prefix}_image_mode"),
         }
 
     def __info_settings(self, site: str, code: str):
+        db_prefix = f"{self.db_prefix.get(site, self.name)}_{site}"
         sett = self.__site_settings(site)
-        sett["max_arts"] = ModelSetting.get_int(f"{self.name}_{site}_art_count")
-        sett["use_extras"] = ModelSetting.get_bool(f"{self.name}_{site}_use_extras")
+        sett["max_arts"] = ModelSetting.get_int(f"{db_prefix}_art_count")
+        sett["use_extras"] = ModelSetting.get_bool(f"{db_prefix}_use_extras")
 
         ps_to_poster = False
-        for tmp in ModelSetting.get_list(f"{self.name}_{site}_small_image_to_poster", ","):
+        for tmp in ModelSetting.get_list(f"{db_prefix}_small_image_to_poster", ","):
             if tmp in code:
                 ps_to_poster = True
                 break
         sett["ps_to_poster"] = ps_to_poster
 
         crop_mode = None
-        for tmp in ModelSetting.get(f"{self.name}_{site}_crop_mode").splitlines():
+        for tmp in ModelSetting.get(f"{db_prefix}_crop_mode").splitlines():
             tmp = list(map(str.strip, tmp.split(":")))
             if len(tmp) != 2:
                 continue

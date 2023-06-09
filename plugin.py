@@ -66,7 +66,6 @@ class P:
             "jav_censored": [
                 ["setting", "설정"],
                 ["dmm", "DMM"],
-                ["mgs", "MGS"],
                 ["javbus", "Javbus"],
             ],
             "jav_censored_ama": [
