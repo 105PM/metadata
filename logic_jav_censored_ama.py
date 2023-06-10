@@ -3,7 +3,7 @@ from flask import jsonify, render_template
 
 # sjva 공용
 from framework import SystemModelSetting
-from lib_metadata import MetadataServerUtil, SiteDmm, SiteJav321, SiteJavbus
+from lib_metadata import MetadataServerUtil, SiteDmm, SiteJav321, SiteJavbus, SiteUtil
 
 from plugin import LogicModuleBase
 
@@ -138,8 +138,19 @@ class LogicJavCensoredAma(LogicModuleBase):
 
         actors = ret["actor"] or []
         for item in actors:
-            # self.process_actor(item)
-            item["name"] = item["originalname"]
+            self.P.logic.get_module("jav_censored").process_actor(item)
+
+            try:
+                name_ja, name_ko = item["originalname"], item["name"]
+                if name_ja and name_ko:
+                    name_trans = SiteUtil.trans(name_ja)
+                    if name_trans != name_ko:
+                        ret["plot"] = ret["plot"].replace(name_trans, name_ko)
+                        ret["tagline"] = ret["tagline"].replace(name_trans, name_ko)
+                        for extra in ret["extras"] or []:
+                            extra["title"] = extra["title"].replace(name_trans, name_ko)
+            except Exception:
+                logger.exception("오역된 배우 이름이 들어간 항목 수정 중 예외:")
 
         ret["title"] = ModelSetting.get(f"{db_prefix}_title_format").format(
             originaltitle=ret["originaltitle"],
