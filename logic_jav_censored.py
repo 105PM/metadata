@@ -10,6 +10,7 @@ from lib_metadata import (
     SiteHentaku,
     SiteJav321,
     SiteJavbus,
+    SiteMgstageDvd,
     SiteUtil,
     UtilNfo,
 )
@@ -30,7 +31,7 @@ class LogicJavCensored(LogicModuleBase):
     db_default = {
         "jav_censored_db_version": "1",
         # "jav_censored_use_sjva": "False",
-        "jav_censored_order": "dmm, javbus",
+        "jav_censored_order": "dmm, mgsdvd, javbus",
         #'jav_censored_plex_is_proxy_preview' : 'True',
         #'jav_censored_plex_landscape_to_art' : 'True',
         "jav_censored_actor_order": "avdbs, hentaku",
@@ -58,6 +59,18 @@ class LogicJavCensored(LogicModuleBase):
         "jav_censored_dmm_tag_option": "0",
         "jav_censored_dmm_use_extras": "True",
         "jav_censored_dmm_test_code": "ssni-900",
+        # mgsdvd
+        "jav_censored_mgsdvd_use_sjva": "False",
+        "jav_censored_mgsdvd_use_proxy": "False",
+        "jav_censored_mgsdvd_proxy_url": "",
+        "jav_censored_mgsdvd_image_mode": "0",
+        "jav_censored_mgsdvd_small_image_to_poster": "",
+        "jav_censored_mgsdvd_crop_mode": "",
+        "jav_censored_mgsdvd_title_format": "[{title}] {tagline}",
+        "jav_censored_mgsdvd_art_count": "0",
+        "jav_censored_mgsdvd_tag_option": "2",
+        "jav_censored_mgsdvd_use_extras": "True",
+        "jav_censored_mgsdvd_test_code": "abf-010",
         # javbus
         "jav_censored_javbus_use_sjva": "False",
         "jav_censored_javbus_use_proxy": "False",
@@ -78,6 +91,7 @@ class LogicJavCensored(LogicModuleBase):
         "hentaku": SiteHentaku,
         "jav321": SiteJav321,
         "javbus": SiteJavbus,
+        "mgsdvd": SiteMgstageDvd,
     }
 
     db_prefix = {
@@ -141,7 +155,7 @@ class LogicJavCensored(LogicModuleBase):
         if sub == "nfo_download":
             code = req.args.get("code")
             call = req.args.get("call")
-            if call == "dmm":
+            if call in ["dmm", "mgsdvd"]:
                 ModelSetting.set(f"{self.name}_{call}_code", code)
                 data = self.search2(code, call)
                 if data:
@@ -172,9 +186,8 @@ class LogicJavCensored(LogicModuleBase):
         for idx, site in enumerate(site_list):
             data = self.search2(keyword, site, manual=manual)
             if data is not None:
-                if idx != 0:
-                    for item in data:
-                        item["score"] += -1
+                for item in data:
+                    item["score"] -= idx
                 ret += data
                 ret = sorted(ret, key=lambda k: k["score"], reverse=True)
             if manual:
@@ -190,6 +203,8 @@ class LogicJavCensored(LogicModuleBase):
             site = "dmm"
         elif code[1] == "T":
             site = "jav321"
+        elif code[1] == "M":
+            site = "mgsdvd"
         else:
             logger.error("처리할 수 없는 코드: code=%s", code)
             return None

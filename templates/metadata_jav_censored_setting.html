@@ -16,7 +16,7 @@
   <form id='setting' name='setting'>
   <div class="tab-content mb-4" id="nav-tabContent">
     {{ macros.m_tab_content_start('normal', true) }}
-      {{ macros.setting_input_text('jav_censored_order', '메타 우선순위', value=arg['jav_censored_order'], desc=['메타데이터를 가져올 우선순위 설정', 'dmm, javbus, jav321']) }}
+      {{ macros.setting_input_text('jav_censored_order', '메타 우선순위', value=arg['jav_censored_order'], desc=['메타데이터를 가져올 우선순위 설정', 'dmm, javbus, jav321, mgsdvd']) }}
       {{ macros.setting_input_text('jav_censored_actor_order', '배우 우선순위', value=arg['jav_censored_actor_order'], desc=['배우정보를 가져울 순위 설정', 'avdbs, hentaku']) }}
       {{ macros.setting_button_with_info([['jav_censored_rcache_clear_btn', '초기화']], left='requests cache 초기화', desc='')}}
     {{ macros.m_tab_content_end() }}
