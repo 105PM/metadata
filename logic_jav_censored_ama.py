@@ -3,7 +3,7 @@ from flask import jsonify, render_template
 
 # sjva 공용
 from framework import SystemModelSetting
-from lib_metadata import MetadataServerUtil, SiteDmm, SiteJav321, SiteJavbus, SiteUtil
+from lib_metadata import MetadataServerUtil, SiteDmm, SiteJav321, SiteJavbus, SiteMgstageAma, SiteUtil
 
 from plugin import LogicModuleBase
 
@@ -20,10 +20,22 @@ ModelSetting = P.ModelSetting
 class LogicJavCensoredAma(LogicModuleBase):
     db_default = {
         "jav_censored_ama_db_version": "1",
-        "jav_censored_ama_order": "jav321",
+        "jav_censored_ama_order": "mgsama jav321",
         "jav_censored_ama_title_format": "[{title}] {tagline}",
         "jav_censored_ama_tag_option": "2",
         "jav_censored_ama_use_extras": "True",
+        # mgsama
+        "jav_censored_ama_mgsama_use_sjva": "False",
+        "jav_censored_ama_mgsama_use_proxy": "False",
+        "jav_censored_ama_mgsama_proxy_url": "",
+        "jav_censored_ama_mgsama_image_mode": "0",
+        "jav_censored_ama_mgsama_small_image_to_poster": "",
+        "jav_censored_ama_mgsama_crop_mode": "",
+        "jav_censored_ama_mgsama_title_format": "[{title}] {tagline}",
+        "jav_censored_ama_mgsama_art_count": "0",
+        "jav_censored_ama_mgsama_tag_option": "0",
+        "jav_censored_ama_mgsama_use_extras": "True",
+        "jav_censored_ama_mgsama_test_code": "siro-5107",
         # jav321
         "jav_censored_ama_jav321_use_sjva": "False",
         "jav_censored_ama_jav321_use_proxy": "False",
@@ -42,6 +54,7 @@ class LogicJavCensoredAma(LogicModuleBase):
         "dmm": SiteDmm,
         "jav321": SiteJav321,
         "javbus": SiteJavbus,
+        "mgsama": SiteMgstageAma,
     }
 
     db_prefix = {
@@ -121,6 +134,8 @@ class LogicJavCensoredAma(LogicModuleBase):
             site = "dmm"
         elif code[1] == "B":
             site = "javbus"
+        elif code[1] == "M":
+            site = "mgsama"
         else:
             logger.error("처리할 수 없는 코드: code=%s", code)
             return None

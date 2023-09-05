@@ -71,6 +71,7 @@ class P:
             ],
             "jav_censored_ama": [
                 ["setting", "설정"],
+                ["mgs", "MGS"],
                 ["jav321", "Jav321"],
             ],
             "jav_uncensored": [
