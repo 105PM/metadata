@@ -4,7 +4,7 @@ from io import BytesIO
 
 # third-party
 import requests
-from flask import Blueprint, Response, redirect, request, send_file
+from flask import Blueprint, Response, redirect, request, send_file, abort
 from PIL import Image
 
 # sjva 공용
@@ -265,6 +265,8 @@ def baseapi(sub):
             return redirect(ret)
     except Exception:
         logger.exception("API 요청 처리 중 예외:")
+        abort(404)
+        return
 
 
 @P.blueprint.route("/normal/<sub>", methods=["GET", "POST"])
@@ -343,3 +345,5 @@ def basenormal(sub):
             return redirect(ret)
     except Exception:
         logger.exception("API 요청 처리 중 예외:")
+        abort(404)
+        return
